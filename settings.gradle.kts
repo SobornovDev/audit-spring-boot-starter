@@ -1,0 +1,1 @@
+rootProject.name = "audit-spring-boot-starter"
