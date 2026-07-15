@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `maven-publish`
 }
 
 val springBootVersion: String by project
@@ -17,6 +18,7 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("com.fasterxml.jackson.core:jackson-databind")
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.slf4j:slf4j-api")
 
@@ -25,4 +27,13 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "audit-autoconfigure"
+            from(components["java"])
+        }
+    }
 }

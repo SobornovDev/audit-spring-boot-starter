@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `maven-publish`
 }
 val springBootVersion: String by project
 
@@ -12,6 +13,15 @@ java {
 dependencies {
     api(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
 
-    api(project(":audit-spring-boot-autoconfigure"))
+    api(project(":autoconfigure"))
     api("org.springframework.boot:spring-boot-starter")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "audit-starter"
+            from(components["java"])
+        }
+    }
 }

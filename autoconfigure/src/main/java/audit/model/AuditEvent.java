@@ -1,4 +1,4 @@
-package model;
+package audit.model;
 
 import java.time.Instant;
 
@@ -10,10 +10,19 @@ public record AuditEvent(
     String body,
     Instant timestamp
 ) {
+
   public static Builder builder() {
     return new Builder();
   }
+
   public static final class Builder {
+
+    private String requestId;
+    private String serviceName;
+    private String source;
+    private String destination;
+    private String body;
+    private Instant timestamp = Instant.now();
 
     public Builder requestId(String requestId) {
       this.requestId = requestId;
@@ -44,13 +53,6 @@ public record AuditEvent(
       this.timestamp = timestamp;
       return this;
     }
-
-    private String requestId;
-    private String serviceName;
-    private String source;
-    private String destination;
-    private String body;
-    private Instant timestamp;
 
     public AuditEvent build() {
       return new AuditEvent(requestId, serviceName, source, destination, body, timestamp);
