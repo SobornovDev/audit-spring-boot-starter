@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,18 +27,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AuditAutoConfiguration {
 
   @Bean
-  @ConditionalOnMissingBean(name = "auditObjectMapper")
-  public ObjectMapper auditObjectMapper() {
+  @ConditionalOnMissingBean
+  public AuditClient auditClient() {
+    return new AuditClientImpl(createAuditObjectMapper());
+  }
+
+  private ObjectMapper createAuditObjectMapper() {
     return new ObjectMapper()
         .registerModule(new JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .setSerializationInclusion(Include.NON_NULL);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public AuditClient auditClient(@Qualifier("auditObjectMapper") ObjectMapper auditObjectMapper) {
-    return new AuditClientImpl(auditObjectMapper);
   }
 
   @Configuration(proxyBeanMethods = false)
