@@ -1,0 +1,34 @@
+stages:
+  - build
+  - publish
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/caches
+    - .gradle/wrapper
+
+build:
+  stage: build
+  image: eclipse-temurin:21-jdk
+  before_script:
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+publish:
+  stage: publish
+  image: eclipse-temurin:21-jdk
+  before_script:
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew publish -Pversion=${CI_COMMIT_TAG#v}
+  rules:
+    - if: '$CI_COMMIT_TAG'
